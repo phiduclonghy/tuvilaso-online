@@ -31,117 +31,28 @@ const TOPICS = [
   { key: 'personality', label: 'Tính cách' },
 ] as const;
 
-const TOPIC_PROMPTS: Record<string, string> = {
-  overview: `请TạoMệnh格Tổng quan，按以下Cấu trúcXuất ra：
-
-**【Mệnh格定性】**
-用Nhất句话概括这个Lá số的核心Cách Cục与Mệnh Chủ气质。
-
-**【Chính TinhLuận giải】**
-MệnhChính Tinh的核心Đặc điểm，引用Nghê Hải Hạ原话或观点。
-
-**【Tam Phương Tứ Chính】**
-财、官、迁TamCung的联动Phân tích及整体Cách Cục。
-
-**【Hiện tạiĐại Hạn】**
-Hiện tạiĐại HạnVận thế方向与最值Đắc关注的事项。
-
-**【优势与Lưu ý】**
-Lá sốThiên赋优势，以及CầnLưu ý的风险或功课。`,
-
-  love: `请SâuPhân tíchTình cảmhôn nhân运，按以下Cấu trúcXuất ra：
-
-**【Tình cảmCách Cục】**
-Nhất句话定性Tình cảmMệnh格。
-
-**【Phu ThêCungPhân tích】**
-Phu ThêCungChính Tinh、Tứ Hóa，以及Nghê Hải Hạ体系的具体Luận giải。
-
-**【Tam Phương联动】**
-相关Cung Vị对Tình cảm的影响。
-
-**【Hiện tạiĐại HạnTình cảm运】**
-Hiện tại10nămTình cảm走向与关键节点。
-
-**【实际建议】**
-具体可行的Tình cảm建议。`,
-
-  career: `请SâuPhân tíchsự nghiệp运，按以下Cấu trúcXuất ra：
-
-**【sự nghiệpCách Cục】**
-Nhất句话定性sự nghiệpMệnh格，宜任职或宜创业。
-
-**【Quan LộcCungPhân tích】**
-Quan LộcCungChính Tinh、Tứ Hóa，以及Nghê sư对这种配置的判断。
-
-**【Tài BạchCung联动】**
-tài vận与sự nghiệp的关系，财路来源Phân tích。
-
-**【Hiện tạiĐại Hạnsự nghiệp运】**
-Hiện tại10nămsự nghiệp走向。
-
-**【实际建议】**
-适合的方向、行业与策略。`,
-
-  wealth: `请SâuPhân tíchtài vận，按以下Cấu trúcXuất ra：
-
-**【tài vậnCách Cục】**
-Nhất句话定性tài vận模式，是主动财还是被动财。
-
-**【Tài BạchCungPhân tích】**
-Tài BạchCungChính Tinh、Tứ Hóa，tài phú来源与流动模式。
-
-**【Điền TrạchCung（tài khố）】**
-积蓄能力与Bất动产Vận thếPhân tích。
-
-**【Hiện tạiĐại Hạntài vận】**
-Hiện tạitài vận走向与Lưu ý事项。
-
-**【理财建议】**
-具体的财务建议。`,
-
-  health: `请Phân tíchsức khỏeVận thế，按以下Cấu trúcXuất ra：
-
-**【Tật ÁchCungChính Tinh】**
-Tật ÁchCungTinh Diệu与sức khỏe含义。
-
-**【主要风险】**
-结合Nghê Hải HạTýNgọ流注理论，Phân tích主要sức khỏe隐患与需关注的部位。
-
-**【Đại Hạnsức khỏe走势】**
-Hiện tạisức khỏe趋势与关键giờ间段。
-
-**【预防建议】**
-具体Lưu ý事项与Dưỡng生方向。`,
-
-  personality: `请Sâu解析tính cáchĐặc điểm，按以下Cấu trúcXuất ra：
-
-**【MệnhChính Tinhtính cách】**
-MệnhChính Tinh的核心tính cáchĐặc điểm，引用Nghê sư原话。
-
-**【Tam Phươngtính cách综合】**
-财、官、迁TamCung对tính cách的影响，全貌描绘。
-
-**【人际关系模式】**
-与他人互动方式、待人处世风格。
-
-**【优势与人生课题】**
-Thiên赋优势，以及Cần面对的人生功课。`,
+const PALACE_ROLES: Record<string, string> = {
+  'Mệnh': 'tính cách và xu hướng cá nhân',
+  'Huynh Đệ': 'anh chị em và quan hệ hợp tác',
+  'Phu Thê': 'tình cảm và hôn nhân',
+  'Tử Nữ': 'con cái và người trẻ hơn',
+  'Tài Bạch': 'tài chính và thu nhập',
+  'Tật Ách': 'sức khỏe theo quan niệm truyền thống',
+  'Thiên Di': 'môi trường bên ngoài và các mối quan hệ',
+  'Nô Bộc': 'bạn bè và người hỗ trợ',
+  'Quan Lộc': 'công việc và sự nghiệp',
+  'Điền Trạch': 'nhà cửa và môi trường gia đình',
+  'Phúc Đức': 'đời sống tinh thần',
+  'Phụ Mẫu': 'cha mẹ và người lớn tuổi',
 };
 
-const PALACE_ROLES: Record<string, string> = {
-  'Mệnh':   '自我、tính cách、先ThiênCách Cục',
-  'Huynh ĐệCung': 'Huynh Đệ关系、合伙人',
-  'Phu ThêCung': 'Tình cảm关系、hôn nhân状态',
-  'tử nữCung': 'tử nữ缘分、下属关系',
-  'Tài BạchCung': 'tài vận来源、收入方式',
-  'Tật ÁchCung': 'Thân体sức khỏe、意外',
-  'Thiên DiCung': '外出机遇、人际Cách Cục',
-  'Nô BộcCung': '朋友圈、贵人、小人',
-  'Quan LộcCung': 'sự nghiệp成就、社会Địa位',
-  'Điền TrạchCung': 'Bất动产、家庭环境',
-  'Phúc ĐứcCung': '精神享受、内心福分',
-  'Phụ MẫuCung': 'Phụ Mẫu关系、文书契约',
+const VI_PROMPTS: Record<string, string> = {
+  overview: 'Hãy luận giải tổng quan lá số bằng tiếng Việt: cung Mệnh, cung Thân, chính tinh, Tam Phương Tứ Chính và đại hạn hiện tại. Nêu điểm mạnh, điều cần lưu ý và giới hạn của cách luận giải.',
+  love: 'Hãy luận giải tình cảm và hôn nhân dựa trên cung Phu Thê, các sao liên quan và đại hạn hiện tại. Trình bày cân bằng, tránh khẳng định chắc chắn.',
+  career: 'Hãy luận giải xu hướng công việc dựa trên cung Quan Lộc, Tài Bạch, Thiên Di và đại hạn hiện tại. Nêu thế mạnh và điểm cần cân nhắc.',
+  wealth: 'Hãy luận giải cách quản lý tài chính theo cung Tài Bạch và Điền Trạch. Chỉ giải thích ý nghĩa truyền thống của lá số, không đưa khuyến nghị đầu tư.',
+  health: 'Hãy giải thích ý nghĩa truyền thống của cung Tật Ách và đại hạn hiện tại. Không chẩn đoán bệnh hoặc thay thế tư vấn y tế.',
+  personality: 'Hãy luận giải tính cách và cách ứng xử dựa trên cung Mệnh, cung Thân và Tam Phương Tứ Chính. Nêu cả điểm mạnh lẫn hạn chế.',
 };
 
 /** Render AI markdown: **【Title】** → gold header, **bold** → strong */
@@ -182,7 +93,8 @@ function AiContent({ text, streaming }: { text: string; streaming?: boolean }) {
   );
 }
 
-const IS_GITHUB_PAGES = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
+const AI_API_URL = process.env.NEXT_PUBLIC_AI_API_URL || '/api/interpret';
+const IS_GITHUB_PAGES = Boolean(process.env.NEXT_PUBLIC_BASE_PATH) && !process.env.NEXT_PUBLIC_AI_API_URL;
 const AI_UNAVAILABLE = 'Trang GitHub Pages chưa có máy chủ luận giải AI. Bạn vẫn có thể lập lá số, xem các cung, đại hạn và lưu niên.';
 
 export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: InsightPanelProps) {
@@ -215,7 +127,7 @@ export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: I
   useEffect(() => {
     if (autoLoaded.current || apiUnavailable) return;
     autoLoaded.current = true;
-    sendMessage(TOPIC_PROMPTS.overview, true);
+    sendMessage(VI_PROMPTS.overview, true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Inject palace analysis when palace selected
@@ -225,23 +137,11 @@ export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: I
 
     const majorStars = selectedPalace.stars.filter(s => s.type === 'major');
     const starDesc = majorStars.length > 0
-      ? majorStars.map(s => `${s.name}${s.siHua ? '化' + s.siHua : ''}`).join('、')
-      : 'Cung Vô Chính Diệu（借Đối Cung）';
+      ? majorStars.map(s => `${s.name}${s.siHua ? ` hóa ${s.siHua}` : ''}`).join(', ')
+      : 'cung Vô Chính Diệu';
     const role = PALACE_ROLES[selectedPalace.name] ?? '';
 
-    const prompt = `请重点Phân tích【${selectedPalace.name}】（主管：${role}），该CungChính Tinh为${starDesc}，按以下Cấu trúcXuất ra：
-
-**【Cung Vị定性】**
-${selectedPalace.name}在Lá số中的意义，以及这种Tinh Diệu配置的整体判断。
-
-**【Chính TinhLuận giải】**
-Chính Tinh在此Cung的Nghê Hải Hạ体系Luận giải，引用具体观点。
-
-**【Tam Phương Tứ Chính联动】**
-Tam Phương Tứ ChínhCung Vị对此Cung的影响。
-
-**【实际建议】**
-基于此Cung的具体建议。`;
+    const prompt = `Hãy luận giải cung ${selectedPalace.name} bằng tiếng Việt. Cung này liên quan đến ${role}; chính tinh: ${starDesc}. Giải thích ý nghĩa truyền thống, ảnh hưởng của Tam Phương Tứ Chính, điểm mạnh và điều cần lưu ý. Không khẳng định chắc chắn tương lai.`;
 
     sendMessage(prompt, true);
   }, [selectedPalace]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -257,32 +157,17 @@ Tam Phương Tứ ChínhCung Vị对此Cung的影响。
     const palaceOfStar = chart.palaces.find(p =>
       p.stars.some(s => s.name === selectedSiHua.starName)
     );
-    const palaceName = palaceOfStar?.name ?? 'Mùi知Cung Vị';
+    const palaceName = palaceOfStar?.name ?? 'cung chưa xác định';
     const viewLabel = selectedSiHua.view === 'daxian' ? 'Đại Hạn' : 'Lưu Niên';
 
-    const prompt = `请Phân tích【${viewLabel}${selectedSiHua.starName}化${selectedSiHua.siHua}】的飞化影响，按以下Cấu trúcXuất ra：
-
-**【化${selectedSiHua.siHua}基本含义】**
-化${selectedSiHua.siHua}在Nghê Hải Hạ体系中的核心含义，以及${selectedSiHua.starName}化${selectedSiHua.siHua}的特殊含义。
-
-**【落Cung影响】**
-${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，该Cung主管的领域受到何种影响，Nghê sư如何Luận giải。
-
-**【Tam Phương Tứ Chính飞化路径】**
-化${selectedSiHua.siHua}入${palaceName}后，对其Tam Phương Tứ Chính（Đối Cung、两个Tam HợpCung）的联动影响。
-
-**【Hiện tạiVận thế影响】**
-在${viewLabel}giờ间维度下，此化${selectedSiHua.siHua}对Mệnh Chủ近期Vận thế的具体影响。
-
-**【实际建议】**
-基于此Tứ Hóa的具体可操作建议。`;
+    const prompt = `Hãy luận giải ${selectedSiHua.starName} hóa ${selectedSiHua.siHua} trong ${viewLabel}, ở cung ${palaceName}. Giải thích ý nghĩa truyền thống của Tứ Hóa, ảnh hưởng đến cung này và Tam Phương Tứ Chính, cùng những điều cần lưu ý. Trả lời bằng tiếng Việt, tránh khẳng định chắc chắn.`;
 
     sendMessage(prompt, true);
   }, [selectedSiHua]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const streamResponse = async (apiMessages: { role: 'user' | 'assistant'; content: string }[]) => {
     try {
-      const res = await fetch('/api/interpret', {
+      const res = await fetch(AI_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chart, messages: apiMessages }),
@@ -294,19 +179,24 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let assistantText = '';
+      let pending = '';
 
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        for (const line of chunk.split('\n')) {
+        pending += decoder.decode(value, { stream: true });
+        const lines = pending.split('\n');
+        pending = lines.pop() || '';
+        for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
           const data = line.slice(6);
           if (data === '[DONE]') break;
           try {
-            const delta = JSON.parse(data).delta?.text ?? '';
+            const event = JSON.parse(data);
+            if (event.error) throw new Error(event.error);
+            const delta = event.delta?.text ?? '';
             assistantText += delta;
             setMessages(prev => {
               const updated = [...prev];
@@ -346,7 +236,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
   const handleTopicClick = (topicKey: string) => {
     if (loadingRef.current || apiUnavailable) return;
     setActiveTopic(topicKey);
-    sendMessage(TOPIC_PROMPTS[topicKey], true);
+    sendMessage(VI_PROMPTS[topicKey], true);
   };
 
   const handleSend = () => {

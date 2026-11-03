@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['lunar-javascript'],
-  output: 'export',
+  output: process.env.NEXT_PUBLIC_BASE_PATH ? 'export' : undefined,
   trailingSlash: true,
   // GitHub Pages chạy ở đường dẫn con (vd: user.github.io/ten-repo/)
   // → cần basePath. Locally (dev) NEXT_PUBLIC_BASE_PATH rỗng nên không ảnh hưởng.

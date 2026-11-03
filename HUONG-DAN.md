@@ -63,5 +63,14 @@ Repo đã được chỉnh sẵn để chạy trên GitHub Pages:
 *(Đã bỏ `import 'server-only'`, set `output: 'export'`, thêm basePath tự động.)*
 
 ## Lưu ý kỹ thuật
-- Bản mã nguồn mở **không có backend AI** (`/api/interpret`) → phần "AI luận giải" không hoạt động offline/Pages. Lập lá số, cách cục, tri thức sao, cổ thư, Thiên Kỷ đều chạy đủ.
+
+### Bật luận giải AI với Vercel và DeepSeek
+
+1. Kết nối repo này với dự án Vercel (Root Directory là thư mục gốc của repo).
+2. Trong **Vercel → Project Settings → Environment Variables**, thêm `DEEPSEEK_API_KEY` cho môi trường Production. Không đưa khóa vào mã nguồn hoặc GitHub.
+3. Triển khai lại dự án trên Vercel sau khi thêm biến môi trường. API sẽ chạy tại `/api/interpret`.
+4. Trang GitHub Pages có thể gọi API Vercel bằng `NEXT_PUBLIC_AI_API_URL` trong workflow deploy. Biến này là URL công khai, không phải khóa bí mật.
+
+Khi dùng luận giải AI, nội dung câu hỏi và dữ liệu các cung sao được gửi đến DeepSeek. Tên và ngày sinh trong lá số được loại khỏi phần dữ liệu gửi đến mô hình. API công khai có thể phát sinh phí sử dụng DeepSeek; hãy đặt giới hạn chi tiêu trong tài khoản dịch vụ.
+- GitHub Pages không tự chạy API. Luận giải AI chỉ hoạt động khi API trên Vercel đã được triển khai, có `DEEPSEEK_API_KEY` và trang tĩnh đã kết nối đúng URL API.
 - Chưa dịch: `docs/tianji-ziwei/` (bài giảng đầy đủ) + trang Điều khoản/Quyền riêng tư → đợt 2.
