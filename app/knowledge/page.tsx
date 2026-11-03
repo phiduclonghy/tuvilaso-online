@@ -1,0 +1,127 @@
+/**
+ * /knowledge — Thư viện tri thứcchính页
+ * 列出 14 Chính Tinh，每Sao可看其在 13 Cung Vị的Luận giải
+ */
+
+import Link from 'next/link';
+import { ALL_STARS, ALL_TOPICS, getKnowledge, STAR_BRIEF_SEO, STAR_TO_SLUG } from '@/lib/seo/knowledge';
+import { TOPIC_LABEL } from '@/lib/ziwei/db-analysis';
+
+export const metadata = {
+  title: 'Tử Vi Đẩu SốThư viện tri thức · 14 Chính Tinh × 13 Cung Vị · Nghê Hải Hạchính tônghệ thống',
+  description: 'dựa trênNghê Hải Hạ《Thiên纪》hệ thốngvà cổ thư《Tử Vi Đẩu Số全集》《骨髓赋》biên soạn的Tử Vi Đẩu SốThư viện tri thức。bao quát 14 Chính Tinh在 13 个Cung Vị的đầy đủ论断，kèmNhất句话定调、核心论断、Lá số依据、经典Nguồn。',
+  keywords: ['Tử Vi Đẩu Số', 'Nghê Hải Hạ', 'Nghê Hải HạTử Vi Đẩu Số', 'Tử Vi Đẩu Số全集', 'Tử Vi Đẩu Số全书', '14 Chính Tinh', '12 Cung Vị'],
+};
+
+export default function KnowledgeHomePage() {
+  const STAR_DESCRIPTIONS_QUICK = STAR_BRIEF_SEO;
+
+  return (
+    <div style={{ background: 'var(--bg-page)', minHeight: '100vh' }}>
+      {/* Thanh trên */}
+      <div className="px-6 py-4 flex items-center justify-between"
+        style={{ borderBottom: '1px solid rgba(184,146,42,0.15)', background: 'var(--bg-page)' }}>
+        <Link href="/" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.3em', textDecoration: 'none' }}>
+          ← Trang chủ
+        </Link>
+        <div style={{ fontSize: '12px', color: 'var(--tx-3)', letterSpacing: '0.2em' }}>
+          Nghê sưbên法论 · Thư viện tri thức
+        </div>
+        <Link href="/library" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.2em', textDecoration: 'none' }}>
+          Cổ thư →
+        </Link>
+      </div>
+
+      {/* Hero */}
+      <div className="text-center px-6 py-14">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(to right, transparent, rgba(184,146,42,0.4))' }} />
+          <span style={{ fontSize: '11px', color: 'var(--ac)', letterSpacing: '0.4em' }}>KNOWLEDGE BASE</span>
+          <div style={{ height: '1px', width: '48px', background: 'linear-gradient(to left, transparent, rgba(184,146,42,0.4))' }} />
+        </div>
+        <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.15em', marginBottom: '12px' }}>
+          Tử Vi Đẩu SốThư viện tri thức
+        </h1>
+        <p style={{ fontSize: '14px', color: 'var(--tx-2)', letterSpacing: '0.08em', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
+          Giới thiệu <strong style={{ color: 'var(--ac)' }}>{ALL_STARS.length}</strong> chính tinh Tử Vi Đẩu Số.
+        </p>
+      </div>
+
+      {/* Thẻ 14 Chính Tinh */}
+      <div className="max-w-5xl mx-auto px-6 pb-20">
+        <div style={{ fontSize: '11px', color: 'var(--tx-3)', letterSpacing: '0.3em', textAlign: 'center', marginBottom: '24px' }}>
+          ThậpTứChính Tinh
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          {ALL_STARS.map(star => (
+            <div
+              key={star}
+              style={{
+                display: 'block',
+                padding: '14px 10px',
+                background: 'var(--bg-card)',
+                border: '1px solid rgba(184,146,42,0.2)',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+              }}
+              className="hover:shadow-md hover:border-amber-400"
+            >
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.15em' }}>
+                {star}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Danh sách chi tiết (mỗi Chính Tinh + giới thiệu + nút vào) */}
+        <div className="mt-14 space-y-4">
+          {ALL_STARS.map(star => (
+            <div key={star} style={{
+              background: 'var(--bg-card)',
+              border: '1px solid rgba(184,146,42,0.18)',
+              borderRadius: '12px',
+              padding: '18px 22px',
+            }}>
+              <div className="flex items-baseline gap-3 mb-2">
+                <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.1em' }}>
+                  {star}Sao
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--tx-3)', letterSpacing: '0.15em' }}>
+                  ZI WEI · 14 STARS
+                </span>
+              </div>
+              <p style={{ fontSize: '12px', color: 'var(--tx-2)', lineHeight: 1.7, marginBottom: '12px' }}>
+                {STAR_DESCRIPTIONS_QUICK[star] || ''}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {ALL_TOPICS.map(t => {
+                  const k = getKnowledge(star, t);
+                  if (!k.exists) return null;
+                  return (
+                    <Link
+                      key={t}
+                      href={`/knowledge/${STAR_TO_SLUG[star]}/${t}`}
+                      style={{
+                        fontSize: '11px',
+                        padding: '4px 10px',
+                        background: 'rgba(184,146,42,0.06)',
+                        border: '1px solid rgba(184,146,42,0.15)',
+                        borderRadius: '999px',
+                        color: 'var(--tx-2)',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      nhập{k.palaceName} · {TOPIC_LABEL[t]}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
