@@ -44,7 +44,7 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           NEXT_PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_AI_API_URL: ${{ vars.AI_API_URL }}
+          NEXT_PUBLIC_AI_API_URL: https://tuvilaso-online.vercel.app/api/interpret/
 
       - name: Preserve Next.js assets on Pages
         run: touch out/.nojekyll
