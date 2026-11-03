@@ -3,7 +3,6 @@ import { useState } from 'react';
 import BirthForm from '@/components/BirthForm';
 import ChartBoard from '@/components/ChartBoard';
 import InsightPanel from '@/components/InsightPanel';
-import TimeNav, { type TimeView } from '@/components/TimeNav';
 import { generateChart } from '@/lib/ziwei/algorithm';
 import type { BirthInfo, ZiweiChart, Palace } from '@/lib/ziwei/types';
 
@@ -20,18 +19,16 @@ import type { BirthInfo, ZiweiChart, Palace } from '@/lib/ziwei/types';
 export default function ChartPage() {
   const [chart, setChart] = useState<ZiweiChart | null>(null);
   const [selectedPalace, setSelectedPalace] = useState<Palace | null>(null);
-  const [view, setView] = useState<TimeView>('mingpan');
-  const [liunianYear, setLiunianYear] = useState(() => new Date().getFullYear());
 
   // ── Mùi khởi lá số: hiển thị biểu mẫu thông tin sinh ──
   if (!chart) {
     return (
       <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 20px' }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Tử Vi Đẩu SốLập lá số</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Lập lá số Tử Vi Đẩu Số</h1>
         <p style={{ color: '#888', marginBottom: 32, fontSize: 14, lineHeight: 1.7 }}>
-          Nhập ngày tháng năm sinh giờ, động cơ lập lá số mã nguồn mở sẽ tạo lá số ngay lập tức.
+          Nhập ngày, tháng, năm và giờ sinh để lập lá số.
           <br />
-          (Trang này là Demo động cơ, giao diện bản thương mại hoàn chỉnh không nằm trong phạm vi mã nguồn mở; lõi lập lá số hoàn toàn mở.)
+          Dữ liệu lá số được tính ngay trên trình duyệt của bạn.
         </p>
         <BirthForm onSubmit={(info: BirthInfo) => setChart(generateChart(info))} />
       </main>
@@ -51,14 +48,6 @@ export default function ChartPage() {
       >
         ← Tạo lại lá số
       </button>
-
-      <TimeNav
-        chart={chart}
-        view={view}
-        liunianYear={liunianYear}
-        onViewChange={setView}
-        onYearChange={setLiunianYear}
-      />
 
       <div
         className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]"

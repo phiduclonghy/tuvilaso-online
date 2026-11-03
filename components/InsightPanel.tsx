@@ -23,12 +23,12 @@ interface InsightPanelProps {
 }
 
 const TOPICS = [
-  { key: 'overview',     label: 'Mệnh格' },
+  { key: 'overview',     label: 'Tổng quan' },
   { key: 'love',        label: 'Tình cảm' },
-  { key: 'career',      label: 'sự nghiệp' },
-  { key: 'wealth',      label: 'tài vận' },
-  { key: 'health',      label: 'sức khỏe' },
-  { key: 'personality', label: 'tính cách' },
+  { key: 'career',      label: 'Sự nghiệp' },
+  { key: 'wealth',      label: 'Tài vận' },
+  { key: 'health',      label: 'Sức khỏe' },
+  { key: 'personality', label: 'Tính cách' },
 ] as const;
 
 const TOPIC_PROMPTS: Record<string, string> = {
@@ -182,10 +182,16 @@ function AiContent({ text, streaming }: { text: string; streaming?: boolean }) {
   );
 }
 
+const IS_GITHUB_PAGES = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
+const AI_UNAVAILABLE = 'Trang GitHub Pages chưa có máy chủ luận giải AI. Bạn vẫn có thể lập lá số, xem các cung, đại hạn và lưu niên.';
+
 export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: InsightPanelProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(
+    IS_GITHUB_PAGES ? [{ role: 'assistant', content: AI_UNAVAILABLE }] : []
+  );
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [apiUnavailable, setApiUnavailable] = useState(IS_GITHUB_PAGES);
   const [activeTopic, setActiveTopic] = useState<string>('overview');
   const messagesRef = useRef<Message[]>([]); // always-current copy for closures
   const loadingRef = useRef(false);
@@ -207,14 +213,14 @@ export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: I
 
   // Auto-generate Mệnh格Tổng quan on mount
   useEffect(() => {
-    if (autoLoaded.current) return;
+    if (autoLoaded.current || apiUnavailable) return;
     autoLoaded.current = true;
     sendMessage(TOPIC_PROMPTS.overview, true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Inject palace analysis when palace selected
   useEffect(() => {
-    if (!selectedPalace || selectedPalace.branch === lastPalaceBranch.current) return;
+    if (apiUnavailable || !selectedPalace || selectedPalace.branch === lastPalaceBranch.current) return;
     lastPalaceBranch.current = selectedPalace.branch;
 
     const majorStars = selectedPalace.stars.filter(s => s.type === 'major');
@@ -242,7 +248,7 @@ Tam Phương Tứ ChínhCung Vị对此Cung的影响。
 
   // 注入Tứ Hóa飞化Phân tích
   useEffect(() => {
-    if (!selectedSiHua) return;
+    if (apiUnavailable || !selectedSiHua) return;
     const key = `${selectedSiHua.starName}-${selectedSiHua.siHua}-${selectedSiHua.view}`;
     if (key === lastSiHuaKey.current) return;
     lastSiHuaKey.current = key;
@@ -282,8 +288,8 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
         body: JSON.stringify({ chart, messages: apiMessages }),
       });
       if (res.status === 404) throw new Error('api-missing');
-      if (!res.ok) throw new Error('Yêu cầuThất bại');
-      if (!res.body) throw new Error('Không phản hồi流');
+      if (!res.ok) throw new Error('Yêu cầu thất bại');
+      if (!res.body) throw new Error('Không có dữ liệu phản hồi');
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -312,7 +318,8 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
       }
     } catch (e) {
       const missing = e instanceof Error && e.message === 'api-missing';
-      setMessages(prev => [...prev, { role: 'assistant', content: missing ? 'Mã nguồn mở版Bất含 AI Luận giảiAPI（/api/interpret），Cần你自KỷTriển khai后才能用，详见 README「Bắt đầu nhanh」。Lập lá số本ThânBấtCầnBất kỳ API Key。' : 'Luận giảiThất bại，请稍后Thử lại。' }]);
+      if (missing) setApiUnavailable(true);
+      setMessages(prev => [...prev, { role: 'assistant', content: missing ? AI_UNAVAILABLE : 'Không thể tạo luận giải lúc này. Vui lòng thử lại sau.' }]);
     } finally {
       setLoading(false);
       loadingRef.current = false;
@@ -320,7 +327,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
   };
 
   const sendMessage = (text: string, hidden = false) => {
-    if (!text.trim() || loadingRef.current) return;
+    if (!text.trim() || loadingRef.current || apiUnavailable) return;
     loadingRef.current = true;
     setLoading(true);
 
@@ -337,7 +344,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
   };
 
   const handleTopicClick = (topicKey: string) => {
-    if (loadingRef.current) return;
+    if (loadingRef.current || apiUnavailable) return;
     setActiveTopic(topicKey);
     sendMessage(TOPIC_PROMPTS[topicKey], true);
   };
@@ -358,7 +365,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
               <button
                 key={t.key}
                 onClick={() => handleTopicClick(t.key)}
-                disabled={loading}
+                disabled={loading || apiUnavailable}
                 className="py-1.5 text-[10px] font-medium rounded-lg transition-all duration-150 disabled:opacity-40"
                 style={{
                   background: isActive ? 'rgba(212,168,67,0.12)' : 'transparent',
@@ -380,7 +387,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="text-4xl mb-3" style={{ color: 'var(--t-gold)', opacity: 0.1 }}>✦</div>
-            <p className="text-[10px] animate-pulse" style={{ color: 'var(--t-faint)' }}>Mệnh格Luận giảiĐang tạo…</p>
+            <p className="text-[10px] animate-pulse" style={{ color: 'var(--t-faint)' }}>Đang tạo luận giải…</p>
           </div>
         )}
 
@@ -423,7 +430,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
                   style={{ color: 'var(--t-faint)' }}
                 >
                   <span style={{ color: 'var(--t-gold)', opacity: 0.4 }}>✦</span>
-                  Mệnh LýLuận giải
+                  Luận giải AI
                 </div>
                 <AiContent text={msg.content} streaming={loading && isLastMsg} />
               </motion.div>
@@ -440,8 +447,8 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="继续追问，如：今năm适合换工作吗？"
-            disabled={loading}
+            placeholder={apiUnavailable ? 'Luận giải AI chưa khả dụng trên GitHub Pages' : 'Đặt câu hỏi về lá số của bạn…'}
+            disabled={loading || apiUnavailable}
             className="flex-1 rounded-lg px-3 py-2 text-[11px] focus:outline-none transition-colors"
             style={{
               background: 'var(--t-card)',
@@ -451,7 +458,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
           />
           <button
             onClick={handleSend}
-            disabled={loading || !input.trim()}
+            disabled={loading || apiUnavailable || !input.trim()}
             className="px-3 py-2 rounded-lg text-[11px] font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             style={{
               background: 'rgba(212,168,67,0.15)',
@@ -459,7 +466,7 @@ ${selectedSiHua.starName}化${selectedSiHua.siHua}落在【${palaceName}】，�
               color: 'var(--t-gold)',
             }}
           >
-            {loading ? '…' : '追问'}
+            {loading ? '…' : 'Gửi'}
           </button>
         </div>
       </div>

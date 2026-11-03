@@ -151,7 +151,9 @@ export default function TimeNav({
           className="flex items-center gap-2 mt-1.5 px-1 flex-wrap"
         >
           <span className="text-[9px]" style={{ color: 'var(--t-faint)' }}>
-            {view === 'daxian' ? 'Đại Hạn' : `${liunianYear}`}·{overlayInfo.stemName}nămTứ Hóa：
+            {view === 'daxian'
+              ? `Tứ hóa đại hạn (can ${overlayInfo.stemName}):`
+              : `Tứ hóa lưu niên ${liunianYear} (can ${overlayInfo.stemName}):`}
           </span>
           {(['Lộc', 'Quyền', 'Khoa', 'Kỵ'] as const).map(sh => {
             const starName = Object.keys(overlayInfo.overlay).find(k => overlayInfo.overlay[k] === sh);
