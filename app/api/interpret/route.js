@@ -20,6 +20,9 @@ function chartSummary(chart) {
   if (!chart || !Array.isArray(chart.palaces)) return null;
   const palaces = chart.palaces.slice(0, 12).map((p) => ({
     name: String(p.name || '').slice(0, 40),
+    branch: p.branch,
+    isMingGong: Boolean(p.isMingGong),
+    isShenGong: Boolean(p.isShenGong),
     stars: Array.isArray(p.stars)
       ? p.stars.slice(0, 25).map((s) => ({
           name: String(s.name || '').slice(0, 40),
@@ -31,6 +34,8 @@ function chartSummary(chart) {
   }));
   return {
     palaces,
+    mingGong: chart.palaces.find((p) => p.isMingGong)?.name || null,
+    shenGong: chart.palaces.find((p) => p.isShenGong)?.name || null,
     currentDaXian: chart.daXians?.[chart.currentDaXianIndex] || null,
     wuxingJuName: chart.wuxingJuName || '',
   };
@@ -74,7 +79,7 @@ export async function POST(request) {
     return json('Thiếu lá số hoặc câu hỏi.', 400, origin);
   }
 
-  const system = `Bạn là người giải thích lá số Tử Vi Đẩu Số bằng tiếng Việt rõ ràng, tự nhiên. Dựa vào dữ liệu lá số được cung cấp, phân biệt dữ kiện trên lá số với cách diễn giải truyền thống. Không khẳng định chắc chắn tương lai. Không đưa ra chẩn đoán sức khỏe hoặc lời khuyên đầu tư, pháp lý. Nếu dữ liệu thiếu, nói rõ giới hạn. Trả lời ngắn gọn, có cấu trúc và phù hợp câu hỏi. Dữ liệu lá số (đã bỏ tên và ngày sinh): ${JSON.stringify(summary)}`;
+  const system = `Bạn là người giải thích lá số Tử Vi Đẩu Số bằng tiếng Việt rõ ràng, tự nhiên. Chỉ nêu các sao và vị trí có trong dữ liệu được cung cấp; tuyệt đối không tự thêm sao hoặc đoán cung Thân khi đã có trường shenGong. Phân biệt dữ kiện trên lá số với cách diễn giải truyền thống. Không khẳng định chắc chắn tương lai. Không đưa ra chẩn đoán sức khỏe hoặc lời khuyên đầu tư, pháp lý. Nếu dữ liệu thiếu, nói rõ giới hạn. Trả lời ngắn gọn, có cấu trúc và phù hợp câu hỏi. Dữ liệu lá số (đã bỏ tên và ngày sinh): ${JSON.stringify(summary)}`;
 
   let upstream;
   try {
